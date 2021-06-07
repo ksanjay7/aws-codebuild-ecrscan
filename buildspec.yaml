@@ -3,13 +3,17 @@ version: 0.2
 phases:
   install:
     commands:
+      #Image updates
       - "apt update"
       - "apt install rpm -y"
+      #PipelineAuth
       - curl -u $GIT_TOKEN:x-oauth-basic https://api.github.com/user
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      #Need Packaged Download
       - "wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb"
       - "dpkg -i trivy_0.18.3_Linux-64bit.deb"
       - gem install cfn-nag
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -17,17 +21,21 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Building the Docker image...          
+      #Build Commands
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker images
+      #Iamge Scanning Commands
       - trivy image $IMAGE_REPO_NAME:$IMAGE_TAG
       - trivy image -f json -o results.json --exit-code 0 --severity HIGH,MEDIUM,LOW $IMAGE_REPO_NAME:$IMAGE_TAG
       - trivy image -f json -o results.json --exit-code 1 --severity CRITICAL $IMAGE_REPO_NAME:$IMAGE_TAG
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG    
+      #Tempaltes Scanning
+      - cfn_nag_scan --input-path pipeline.yaml
+      
   post_build:
     commands:
       - echo Build completed on `date`
-      - echo Pushing the Docker image...
+      - echo Tag and Push the Docker image...
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
 reports: 
   DockerSecurityReports: 
