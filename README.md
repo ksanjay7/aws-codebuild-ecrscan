@@ -1,1 +1,1 @@
-# aws-codebuild-ecrscan sample
+# aws-codebuild-ecrscan
