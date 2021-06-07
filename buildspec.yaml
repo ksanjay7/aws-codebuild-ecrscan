@@ -7,6 +7,7 @@ phases:
       - "apt install rpm -y"
       - "wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb"
       - "dpkg -i trivy_0.18.3_Linux-64bit.deb"
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
