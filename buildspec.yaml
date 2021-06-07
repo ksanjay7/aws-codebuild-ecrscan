@@ -5,8 +5,8 @@ phases:
     commands:
       - "apt update"
       - "apt install rpm -y"
-      - "wget https://github.com/aquasecurity/trivy/releases/download/v0.1.6/trivy_0.1.6_Linux-64bit.deb"
-      - "dpkg -i trivy_0.1.6_Linux-64bit.deb"
+      - "wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb"
+      - "dpkg -i trivy_0.18.3_Linux-64bit.deb"
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
