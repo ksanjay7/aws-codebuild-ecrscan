@@ -1,14 +1,17 @@
 version: 0.2
 
 phases:
-  #install:
-    #commands:
-      #- "wget https://github.com/aquasecurity/trivy/releases/download/v0.1.6/trivy_0.1.6_Linux-64bit.deb"
-      #- "dpkg -i trivy_0.1.6_Linux-64bit.deb"
+  install:
+    commands:
+      - "apt update"
+      - "apt install rpm -y"
+      - "wget https://github.com/aquasecurity/trivy/releases/download/v0.1.6/trivy_0.1.6_Linux-64bit.deb"
+      - "dpkg -i trivy_0.1.6_Linux-64bit.deb"
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      #- aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - "$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)"
   build:
     commands:
       - echo Build started on `date`
