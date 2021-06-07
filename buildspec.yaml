@@ -8,6 +8,7 @@ phases:
       - curl -u $GIT_TOKEN:x-oauth-basic https://api.github.com/user
       - "wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb"
       - "dpkg -i trivy_0.18.3_Linux-64bit.deb"
+      - gem install cfn-nag
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   pre_build:
     commands:
