@@ -13,6 +13,7 @@ phases:
       - "wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb"
       - "dpkg -i trivy_0.18.3_Linux-64bit.deb"
       - gem install cfn-nag
+      - pip3 install checkov
 
   pre_build:
     commands:
