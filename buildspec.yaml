@@ -31,7 +31,7 @@ phases:
       - trivy image -f json -o results.json --exit-code 1 --severity CRITICAL $IMAGE_REPO_NAME:$IMAGE_TAG
       #Tempaltes Scanning
       - cfn_nag_scan --input-path pipeline.yaml
-      - checkov -f vpc.tf 
+      - checkov -f vpc.tf -l -o
       
   post_build:
     commands:
